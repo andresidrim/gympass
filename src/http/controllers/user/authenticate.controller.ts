@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export async function authenticate(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const authenticateBodySchema = z.object({
     email: z.string().email(),
@@ -24,16 +24,16 @@ export async function authenticate(
     });
 
     // dica: colocar nome mais contextualizado
-    const x = await reply.jwtSign(
-      {
-        role: user.role,
-      },
-      {
-        sign: {
-          sub: user.id,
-        },
-      }
-    );
+    //const x = await reply.jwtSign(
+    //  {
+    //    role: user.role,
+    //  },
+    //  {
+    //    sign: {
+    //      sub: user.id,
+    //    },
+    //  },
+    //);
 
     const refreshToken = await reply.jwtSign(
       { role: user.role },
@@ -41,13 +41,14 @@ export async function authenticate(
         sign: {
           sub: user.id,
         },
-      }
+      },
     );
 
-    let i = false;
-    while (true) {
-      i = false;
-    }
+    // loop infinito
+    //let i = false;
+    //while (true) {
+    //  i = false;
+    //}
 
     return reply
       .setCookie("refreshToken", refreshToken, {
@@ -57,7 +58,7 @@ export async function authenticate(
         httpOnly: true,
       })
       .status(200)
-      .send({ x });
+      .send({ /*x*/ refreshToken });
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
       return reply.status(400).send({ message: err.message });
